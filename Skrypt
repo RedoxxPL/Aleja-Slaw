@@ -1,0 +1,60 @@
+command /alejaslaw:alejaslaw [<text="brak">] [<text>]:
+	description: Aleja Slaw » Glowna komenda skryptu.
+	executable by: players
+	aliases: alejaslaw
+	trigger:
+		if player has permission "alejaslaw.admin":
+			if arg 1 is not "open" or "update":
+				send ""
+				send "&9=================================================="
+				send "  &7Uzyj: &6/aleja <argument> <tekst>:"
+				send "  &9* &6open &8-- &7Menu Aleji."
+				send "  &9* &6update &8-- &7Aktualizowanie skryptu"
+				send "&9=================================================="
+			if arg 1 is "open":
+				execute console command "alejaslaw:menu %player% open-menu"
+			if arg 1 is "update":
+				if player has permission "alejaslaw.Update":
+					set {_latest} to result of connect to "RAW VERSION"
+					set {_now} to "0.2 BETA"
+					if {_latest} is not {_now}:
+						send "&b*&eAleja&b* &7Aktualizowanie skryptu...."
+						send "&&b*&eAleja&b* &7Aktualizowanie skryptu...." to console
+						wait 2 ticks
+						delete file "plugins/Skript/scripts/%script%.sk"
+						wait 2 ticks
+						download from "RAW SKRYPT" to "plugins/Skript/scripts/%script%.sk"
+						wait 2 ticks
+						broadcast "&b*&eAleja&b* &7Uwaga! Teraz moze wystapic lag!"
+						wait 2 ticks
+						execute console command "sk reload %script%"
+						wait 2 ticks
+						send "&b*&eAleja&b* &7Skrypt zostal zaktualizowany."
+						send "&b*&eAleja&b* &7Skrypt zostal zaktualizowany." to console
+					if {_latest} is {_now}:
+						send "&b*&eAleja&b* &7Skrypt pracuje na najnowszej wersji!"
+				else:
+					send "&b*&eAleja&b* &7Nie posiadasz uprawnien! (alejaslaw.update)"
+command /alejaslaw:menu [<player>] [<text>] [<text>]:
+	description: Aleja Slaw » Wyswietlanie menu.
+	trigger:
+		if executor is console:
+			if arg 2 is "open-menu":
+				set {_latest} to result of connect to "RAW VERSION"
+				set {_now} to "0.2 BETA"
+				open chest with 4 rows named "&aMenu glowne" to player-arg
+				wait 2 ticks
+					
+				format slot 10 of player-arg with 1 of blaze rod named "&9>> &6&lROZDZKA" with lore "||&7(Kliknij, aby dostac rozdzke do kontrolowania)" to run "PlayerManager:menu %player-arg% glowne-rozdzka"
+				format slot 13 of player-arg with 1 of player head named "&9>> &6&lGRACZ" with lore "||&7(Kliknij, aby wyswietlic liste graczy)" to run "PlayerManager:menu %player-arg% open-players"
+				format slot 16 of player-arg with 1 of emerald named "&9>> &6&lODSWIEZ" with lore "||&7(Kliknij, aby odswiezyc menu)" to run "PlayerManager:menu %player-arg% open-menu"
+				format slot 20 of player-arg with 1 of enchanted book named "&9>> &6&lSKRYPT" with lore "   &9* &7Najnowsza wersja: &6%{_latest}%||   &9* &7Uzywana wersja: &6%{_now}%||   &9* &7Nazwa: &6PlayerManager||   &9* &7Pliki: &6https://github.com/norbi002/PlayerManager/" to run "PlayerManager:menu %player-arg% open-menu"
+				format slot 22 of player-arg with 1 of fire named "&9>> &6&lZAMKNIJ" with lore "||&7(Kliknij, aby zamknac)" to close
+				format slot 24 of player-arg with 1 of book named "&9>> &6&lAUTOR" with lore "   &9* &7Autor: &6RedoxxPL||   &9* &7Skype: &6super.norbi" to run "PlayerManager:menu %player-arg% open-menu"
+			if arg 2 is "open-players":
+				open chest with 6 rows named "&aLista graczy" to player-arg
+				wait 2 ticks
+				loop all players:
+					add 1 to {_}
+					format slot {_}-1 of player-arg with 1 of player head named "&9>> &6&l%loop-player%" with lore "||||&7(Kliknij, aby zarzadzac tym graczem)" to run "essentials:warp %loop-player%"
+					format slot 53 of player-arg with 1 of arrow named "&9>> &6&lPowrot" with lore "||||&7(Kliknij, aby powrocic do &6Glownego menu&7)" to run "alejaslaw:menu %player-arg% open-menu"
